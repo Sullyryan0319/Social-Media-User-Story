@@ -2,6 +2,8 @@ const { User, validateUser } = require("../models/userSchema");
 const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
+const config = require('config');
+const jwt = require('jsonwebtoken');
 
 router.get("/", async (req, res) => {
   try {
@@ -45,13 +47,14 @@ router.post("/", async (req, res) => {
     });
 
     await user.save();
-    return res.send({
+    const token = jwt.sign({
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       dob: user.dob,
       christmasPreference: user.christmasPreference,
-    });
+    }, config.get('jwtsecret'));
+    return res.send(token);
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }
@@ -79,8 +82,14 @@ router.put("/:id", async (req, res) => {
         .send(`The user with id "${req.params.id}" does not exist.`);
 
     await user.save();
-
-    return res.send(user);
+    const token = jwt.sign({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      dob: user.dob,
+      christmasPreference: user.christmasPreference,
+    }, config.get('jwtsecret'));
+    return res.send(token);
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }
