@@ -14,13 +14,16 @@ router.post("/", async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     user = new User({
-      name: req.body.name,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       email: req.body.email,
+      dob: req.body.dob,
+      christmasPreference: req.body.christmasPreference,
       password: await bcrypt.hash(req.body.password, salt),
     });
 
     await user.save();
-    return res.send({ _id: user._id, name: user.name, email: user.email });
+    return res.send({ firstName: user.firstName, lastName: user.lastName, email: user.email, dob: user.dob, christmasPreference: user.christmasPreference });
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }
