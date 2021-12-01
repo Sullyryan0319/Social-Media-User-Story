@@ -55,25 +55,26 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
 
-        const { error } = validateProduct(req.body);
+        const { error } = validateUser(req.body);
         if (error) return res.status(400).send(error);
         
-        const product = await Product.findByIdAndUpdate(
+        const user = await User.findByIdAndUpdate(
             req.params.id,
             {
-                name: req.body.name,
-                description: req.body.description,
-                category: req.body.category,
-                price: req.body.price
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                email: req.body.email,
+                password: req.body.password,
+                dob: req.body.dob
             },
             { new: true} 
             );
-            if (!product)
-                return res.status(400).send(`The product with id "${req.params.id}" does not exist.`);
+            if (!user)
+                return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
 
-                await product.save();
+                await user.save();
 
-                return res.send(product);
+                return res.send(user);
 
         } catch (ex) {
             return res.status(500).send(`Internal Server Error: ${ex}`);
@@ -84,12 +85,12 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         
-        const product = await Product.findByIdAndDelete(req.params.id);
+        const user = await User.findByIdAndDelete(req.params.id);
 
-        if (!product)
-            return res.status(400).send(`The product with id "${req.params.id}" does not exist.`);
+        if (!user)
+            return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
 
-            return res.send(product);
+            return res.send(user);
 
         } catch (ex) {
             return res.status(500).send(`Internal Server Error: ${ex}`);

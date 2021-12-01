@@ -55,5 +55,21 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+      
+      const user = await User.findByIdAndDelete(req.params.id);
+
+      if (!user)
+          return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+
+          return res.send(user);
+
+      } catch (ex) {
+          return res.status(500).send(`Internal Server Error: ${ex}`);
+
+  }
+})
+
 module.exports = router;
 
