@@ -1,6 +1,9 @@
 const {Product, validateProduct} = require('../models/product');
+const { User, validateUser } = require("../models/userSchema"); 
 const express = require('express');
 const router = express.Router();
+
+
 
 router.get('/', async (req, res) => {
     try {

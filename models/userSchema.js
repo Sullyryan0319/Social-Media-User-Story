@@ -1,27 +1,34 @@
-const mongoose = require('mongoose');
-const Joi = require('joi');
+const mongoose = require("mongoose");
+const Joi = require("joi");
 
-const productSchema = new mongoose.Schema({
-    name: {type: String, required: true, minlength: 2, maxlength: 255},
-    description: {type: String, required: true}, 
-    category: {type: String, required: true, minlength: 5, maxlength: 50},
-    price: {type: Number, required: true},
-    dateModified: {type: Date, default: Date.now},
+const userSchema = new mongoose.Schema({
+  firstName: { type: String, required: true, minlength: 5, maxlength: 50 },
+  lastName: { type: String, required: true, minlength: 5, maxlength: 50 },
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+    minlength: 5,
+    maxlength: 255,
+  },
+  dob: { type: String, required: true, minlength: 5, maxlength: 50 },
+  christmasPreference: { type: String, required: true},
+  friends: { type: [friendSchema], default: [] },
+  posts: { type: [postSchema], default: [] }
+  password: { type: String, required: true, maxlength: 1024, minlength: 5 },
+  isAdmin: { type: Boolean, default: false },
+});
 
+const User = mongoose.model("User", userSchema);
 
-})
-const Product = mongoose.model('Product', productSchema);
-
-function validateProduct(product) {
-    const schema = Joi.object({
-        name: Joi.string().min(2).max(100).required(),
-        description: Joi.string().required(),
-        category: Joi.string().min(5).max(50).required(),
-        price: Joi.number().required()
-    
-    });
-    return schema.validate(product);
+function validateUser(user) {
+  const schema = Joi.object({
+    name: Joi.string().min(5).max(50).required(),
+    email: Joi.string().min(5).max(255).required().email(),
+    password: Joi.string().min(5).max(1024).required(),
+  });
+  return schema.validate(user);
 }
-exports.Product = Product;
-exports.validateProduct = validateProduct;
-exports.productSchema = productSchema;
+
+exports.User = User;
+exports.validateUser = validateUser;
