@@ -1,34 +1,30 @@
 const { User, validateUser } = require("../models/userSchema");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
 
-
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-
-      const users = await User.find();
-      return res.send(users);
-      
+    const users = await User.find();
+    return res.send(users);
   } catch (ex) {
-      return res.status(500).send(`Internal Server Error: ${ex}`);
+    return res.status(500).send(`Internal Server Error: ${ex}`);
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
+    const user = await User.findById(req.params.id);
+    if (!user)
+      return res
+        .status(400)
+        .send(`The product with id "${req.params.id}" does not exist`);
 
-      const user = await User.findById(req.params.id);
-      if (!user)
-          return res.status(400).send(`The product with id "${req.params.id}" does not exist`);
-
-          return res.send(user);
-
+    return res.send(user);
   } catch (ex) {
-      return res.status(500).send(`Internal Server Error: ${ex}`)
+    return res.status(500).send(`Internal Server Error: ${ex}`);
   }
-})
-
+});
 
 router.post("/", async (req, res) => {
   try {
@@ -49,27 +45,60 @@ router.post("/", async (req, res) => {
     });
 
     await user.save();
-    return res.send({ firstName: user.firstName, lastName: user.lastName, email: user.email, dob: user.dob, christmasPreference: user.christmasPreference });
+    return res.send({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      dob: user.dob,
+      christmasPreference: user.christmasPreference,
+    });
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
-      
-      const user = await User.findByIdAndDelete(req.params.id);
+    const { error } = validateUser(req.body);
+    if (error) return res.status(400).send(error);
 
-      if (!user)
-          return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: req.body.password,
+        dob: req.body.dob,
+      },
+      { new: true }
+    );
+    if (!user)
+      return res
+        .status(400)
+        .send(`The user with id "${req.params.id}" does not exist.`);
 
-          return res.send(user);
+    await user.save();
 
-      } catch (ex) {
-          return res.status(500).send(`Internal Server Error: ${ex}`);
-
+    return res.send(user);
+  } catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
   }
-})
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user)
+      return res
+        .status(400)
+        .send(`The user with id "${req.params.id}" does not exist.`);
+
+    return res.send(user);
+  } catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
+  }
+});
 
 module.exports = router;
-
