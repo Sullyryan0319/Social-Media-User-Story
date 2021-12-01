@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/algreen27/mongo-project#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "config": "^3.3.6",
     "express": "^4.17.1",
     "joi": "^17.4.2",
