@@ -1,4 +1,4 @@
-const {Product, validateProduct} = require('../models/product');
+const { User, validateUser } = require("../models/user");
 const { User, validateUser } = require("../models/userSchema"); 
 const express = require('express');
 const router = express.Router();
@@ -8,8 +8,8 @@ const router = express.Router();
 router.get('/', async (req, res) => {
     try {
 
-        const products = await Product.find();
-        return res.send(products);
+        const users = await User.find();
+        return res.send(users);
         
     } catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
@@ -19,11 +19,11 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
 
-        const product = await Product.findById(req.params.id);
-        if (!product)
+        const user = await User.findById(req.params.id);
+        if (!user)
             return res.status(400).send(`The product with id "${req.params.id}" does not exist`);
 
-            return res.send(product);
+            return res.send(user);
 
     } catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`)
