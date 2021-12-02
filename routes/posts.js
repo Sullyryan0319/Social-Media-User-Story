@@ -5,13 +5,14 @@ const router = express.Router();
 
 router.get("/:id/posts", async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
-    if (!post)
+    const user = await User.findById(req.params.id);
+    const posts = user.posts;
+    if (!posts)
       return res
         .status(400)
         .send(`The post with id "${req.params.id}" does not exist`);
 
-    return res.send(post);
+    return res.send(posts);
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }
@@ -85,6 +86,27 @@ router.put("/:id/posts/:id", async (req, res) => {
 
 
 
+router.delete("/:id/posts/:postid", async (req, res) => {
+    try {
+      const user = await User.findByIdAndUpdate(
+        req.params.id,
+        {
+            "$pull": {
+              "posts": {
+                "_id": req.params.postId
+              }
+            }
+          });
+      if (!user)
+        return res
+          .status(400)
+          .send(`The post with id "${req.params.postid}" does not exist.`);
+  
+      return res.send(user);
+    } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+  });
 
 
 

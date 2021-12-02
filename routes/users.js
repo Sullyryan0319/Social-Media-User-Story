@@ -136,20 +136,5 @@ router.post("/:id/posts", async (req, res) => {
 });
 
 
-router.delete("/:id/posts/:postid", async (req, res) => {
-  try {
-    const post = await Post.findByIdAndRemove(req.params.postid);
-
-    if (!post)
-      return res
-        .status(400)
-        .send(`The post with id "${req.params.postid}" does not exist.`);
-
-    await user.save();
-    return res.send(user);
-  } catch (ex) {
-    return res.status(500).send(`Internal Server Error: ${ex}`);
-  }
-});
 
 module.exports = router;
