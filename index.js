@@ -1,7 +1,8 @@
 const connectDB = require('./startup/db');
 const express = require('express');
 const app = express();
-const users = require('./routes/users')
+const users = require('./routes/users');
+const posts = require('./routes/posts');
 
 
 connectDB();
