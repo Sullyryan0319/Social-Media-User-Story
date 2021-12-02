@@ -17,6 +17,22 @@ router.get("/:id/posts", async (req, res) => {
   }
 });
 
+
+router.get("/:id/posts/:postId", async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id);
+      if (!user)
+        return res
+          .status(400)
+          .send(`The post with id "${req.params.id}" does not exist`);
+      const post = user.posts.id(req.params.postId); 
+      console.log(post)
+      return res.send(post);
+    } catch (ex) {
+      return res.status(500).send(`Internal Server Error: ${ex}`);
+    }
+  });
+
 router.post("/:id/posts", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
