@@ -1,4 +1,4 @@
-const { User, validateUser } = require("../models/userSchema"); 
+const { Post, validatePost } = require("../models/postSchema"); 
 const express = require('express');
 const router = express.Router();
 
@@ -7,8 +7,8 @@ const router = express.Router();
 router.get('/', async (req, res) => {
     try {
 
-        const users = await User.find();
-        return res.send(users);
+        const posts = await Post.find();
+        return res.send(posts);
         
     } catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`);
@@ -18,33 +18,36 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
 
-        const user = await User.findById(req.params.id);
-        if (!user)
-            return res.status(400).send(`The product with id "${req.params.id}" does not exist`);
+        const post = await Post.findById(req.params.id);
+        if (!post)
+            return res.status(400).send(`The post with id "${req.params.id}" does not exist`);
 
-            return res.send(user);
+            return res.send(post);
 
     } catch (ex) {
         return res.status(500).send(`Internal Server Error: ${ex}`)
     }
 })
 
-router.post('/', async (req, res) => {
+router.post('/:id/posts', async (req, res) => {
     try {
 
-        const {error} = validateProduct(req.body);
+        const {error} = validatePost(req.body);
+        const user = await User.findById(req.params.id);
         if (error)
             return res.status(400).send(error);
 
-        const product = new Product({
-            name: req.body.name, 
+        const post = new Post({
+            // picture: req.body.picture, 
             description : req.body.description,
-            category: req.body.category,
-            price: req.body.price,
+            likes: 0,
+
         });
-        await product.save();
+
+        user.posts.push(post);
+        await user.save();
     
-        return res.send(product);
+        return res.send(user);
 
     
     } catch(ex) {
@@ -52,13 +55,13 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id/posts/:id', async (req, res) => {
     try {
 
-        const { error } = validateUser(req.body);
+        const { error } = validatePost(req.body);
         if (error) return res.status(400).send(error);
         
-        const user = await User.findByIdAndUpdate(
+        const post = await Post.findByIdAndUpdate(
             req.params.id,
             {
                 firstName: req.body.firstName,
@@ -69,12 +72,12 @@ router.put('/:id', async (req, res) => {
             },
             { new: true} 
             );
-            if (!user)
-                return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+            if (!post)
+                return res.status(400).send(`The post with id "${req.params.id}" does not exist.`);
 
-                await user.save();
+                await post.save();
 
-                return res.send(user);
+                return res.send(post);
 
         } catch (ex) {
             return res.status(500).send(`Internal Server Error: ${ex}`);
@@ -85,12 +88,12 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         
-        const user = await User.findByIdAndDelete(req.params.id);
+        const post = await Post.findByIdAndDelete(req.params.id);
 
-        if (!user)
-            return res.status(400).send(`The user with id "${req.params.id}" does not exist.`);
+        if (!post)
+            return res.status(400).send(`The post with id "${req.params.id}" does not exist.`);
 
-            return res.send(user);
+            return res.send(post);
 
         } catch (ex) {
             return res.status(500).send(`Internal Server Error: ${ex}`);
