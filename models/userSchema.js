@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const {Post, postSchema} = require('./postSchema')
 
 const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true, minlength: 5, maxlength: 50 },
@@ -14,7 +15,7 @@ const userSchema = new mongoose.Schema({
   dob: { type: String, required: true, minlength: 5, maxlength: 50 },
   christmasPreference: { type: String, required: true},
   // friends: { type: [friendSchema], default: [] },
-  // posts: { type: [postSchema], default: [] },
+  posts: { type: [postSchema], default: [] },
   password: { type: String, required: true, maxlength: 1024, minlength: 5 },
   isAdmin: { type: Boolean, default: false },
 });

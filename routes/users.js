@@ -1,4 +1,5 @@
 const { User, validateUser } = require("../models/userSchema");
+const { Post, validatePost } = require("../models/postSchema");
 const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
@@ -105,6 +106,28 @@ router.delete("/:id", async (req, res) => {
         .send(`The user with id "${req.params.id}" does not exist.`);
 
     return res.send(user);
+  } catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
+  }
+});
+
+
+router.post("/:id/posts", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user)
+      return res
+        .status(400)
+        .send(`The user with id "${req.params.id}" does not exist.`);
+
+    const post = new Post({
+      description: req.body.description,
+      likes: 0,
+    });
+    if (!post) return res.status(400).send(`Reply doesnt exist.`);
+    user.posts.push(post);
+    await user.save();
+    return res.send(post);
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }
