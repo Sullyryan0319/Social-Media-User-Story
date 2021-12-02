@@ -55,19 +55,20 @@ router.post("/:id/posts", async (req, res) => {
   }
 });
 
-router.put("/:id/posts/:id", async (req, res) => {
+router.put("/:id/posts/:postid", async (req, res) => {
   try {
     const { error } = validatePost(req.body);
     if (error) return res.status(400).send(error);
 
     const post = await Post.findByIdAndUpdate(
-      req.params.id,
+      req.params.postid,
       {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
         dob: req.body.dob,
+        replies: req.body.replies
       },
       { new: true }
     );
