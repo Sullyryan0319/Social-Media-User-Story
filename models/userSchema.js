@@ -12,11 +12,11 @@ const userSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 255,
   },
-  dob: { type: String, required: true, minlength: 5, maxlength: 50 },
-  christmasPreference: { type: String, required: true},
+  dob: { type: String, required: false, minlength: 5, maxlength: 50 },
+  christmasPreference: { type: String, required: false},
   // friends: { type: [friendSchema], default: [] },
   posts: { type: [postSchema], default: [] },
-  password: { type: String, required: true, maxlength: 20, minlength: 5 },
+  password: { type: String, required: true, maxlength: 200, minlength: 5 },
   isAdmin: { type: Boolean, default: false },
   aboutMe: {type: String, maxlength: 1024, minlength: 5 },
   friendRequests: [{}]
@@ -37,5 +37,14 @@ function validateUser(user) {
     return schema.validate(user);
 }
 
+const validateLogin = (req) => {
+  const schema = Joi.object({
+    email: Joi.string().min(5).max(255).required().email(),
+    password: Joi.string().min(5).max(1024).required(),
+  });
+  return schema.validate(req);
+};
+
 exports.User = User;
 exports.validateUser = validateUser;
+exports.validateLogin = validateLogin;

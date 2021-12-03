@@ -1,4 +1,4 @@
-const { User, validateUser } = require("../models/userSchema");
+const { User, validateUser, validateLogin } = require("../models/userSchema");
 const { Post, validatePost } = require("../models/postSchema");
 const bcrypt = require("bcrypt");
 const express = require("express");
@@ -135,6 +135,32 @@ router.post("/:id/posts", async (req, res) => {
   }
 });
 
+router.post("/login", async (req, res) => {
+  try {
+    const { error } = validateLogin(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
+    let user = await User.findOne({ email: req.body.email });
+    if (!user) return res.status(400).send(`Invalid email or password.`);
+
+    const validPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (!validPassword)
+      return res.status(400).send("Invalid email or password.");
+
+      const token = jwt.sign({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        dob: user.dob,
+        christmasPreference: user.christmasPreference,
+      }, config.get('jwtsecret'));
+    return res.send(token);
+  } catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
+  }
+});
 
 module.exports = router;
