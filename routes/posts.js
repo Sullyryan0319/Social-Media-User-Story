@@ -61,15 +61,11 @@ router.put("/:id/posts/:postid", async (req, res) => {
     if (error) return res.status(400).send(error);
 
     const post = await Post.findByIdAndUpdate(
-      req.params.postid,
-      {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: req.body.password,
-        dob: req.body.dob,
-        replies: req.body.replies
-      },
+        req.params.postid,
+        {
+          description: req.body.description,
+          likes: req.body.likes
+        },
       { new: true }
     );
     if (!post)
