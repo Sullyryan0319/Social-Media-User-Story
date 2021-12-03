@@ -16,8 +16,11 @@ const userSchema = new mongoose.Schema({
   christmasPreference: { type: String, required: true},
   // friends: { type: [friendSchema], default: [] },
   posts: { type: [postSchema], default: [] },
-  password: { type: String, required: true, maxlength: 1024, minlength: 5 },
+  password: { type: String, required: true, maxlength: 20, minlength: 5 },
   isAdmin: { type: Boolean, default: false },
+  aboutMe: {type: String, maxlength: 1024, minlength: 5 },
+  friendRequests: [{}]
+
 });
 
 const User = mongoose.model("User", userSchema);

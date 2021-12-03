@@ -85,60 +85,28 @@ router.put("/:id/posts/:postid", async (req, res) => {
   }
 });
 
-
-
 router.delete("/:id/posts/:postid", async (req, res) => {
-    try {
-      const user = await User.findByIdAndUpdate(
-        req.params.id,
-        {
-            "$pull": {
-              "posts": {
-                "_id": req.params.postId
-              }
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+          "$pull": {
+            "posts": {
+              "_id": req.params.postid
             }
-          });
-      if (!user)
-        return res
-          .status(400)
-          .send(`The post with id "${req.params.postid}" does not exist.`);
-  
-      return res.send(user);
-    } catch (ex) {
-      return res.status(500).send(`Internal Server Error: ${ex}`);
-    }
-  });
+          }
+        });
+    if (!user)
+      return res
+        .status(400)
+        .send(`The post with id "${req.params.postid}" does not exist.`);
 
+    return res.send(user.posts.id(req.params.postid));
+  } catch (ex) {
+    return res.status(500).send(`Internal Server Error: ${ex}`);
+  }
+});
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// router.delete("/:id/posts/:postid", async (req, res) => {
-//   try {
-//     const post = await Post.findByIdAndRemove(req.params.postid);
-
-//     if (!post)
-//       return res
-//         .status(400)
-//         .send(`The user with id "${req.params.id}" does not exist.`);
-
-
-//     return res.send(post);
-//   } catch (ex) {
-//     return res.status(500).send(`Internal Server Error: ${ex}`);
-//   }
-// });
 
 
 module.exports = router;
