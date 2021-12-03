@@ -44,7 +44,7 @@ router.post("/:id/posts", async (req, res) => {
 
     const post = new Post({
       description: req.body.description,
-      likes: 0,
+      likes: req.body.likes,
     });
     if (!post) return res.status(400).send(`Reply doesnt exist.`);
     user.posts.push(post);
@@ -56,26 +56,20 @@ router.post("/:id/posts", async (req, res) => {
 });
 
 router.put("/:id/posts/:postid", async (req, res) => {
-  try {
-    const { error } = validatePost(req.body);
-    if (error) return res.status(400).send(error);
-
-    const post = await Post.findByIdAndUpdate(
-        req.params.postid,
-        {
-          description: req.body.description,
-          likes: req.body.likes
-        },
-      { new: true }
-    );
-    if (!post)
+    try {
+        const user = await User.findById(req.params.id)
+        const post = user.posts.id(req.params.postid);
+              post.like= req.body.like,
+              post.description= req.body.description
+              
+      if (!user)
       return res
         .status(400)
-        .send(`The post with id "${req.params.id}" does not exist.`);
+        .send(`The post with id "${req.params.postid}" does not exist.`);
 
-    await post.save();
+    await user.save();
 
-    return res.send(post);
+    return res.send(user.posts.id(req.params.postid));
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }

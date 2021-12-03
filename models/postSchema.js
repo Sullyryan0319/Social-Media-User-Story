@@ -19,5 +19,5 @@ function validatePost(post) {
 }
 
 exports.Post = Post;
-exports.validate = validatePost;
+exports.validatePost = validatePost;
 exports.postSchema = postSchema;
