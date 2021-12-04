@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 255,
   },
-  dob: { type: String, required: false, minlength: 2, maxlength: 50 },
+  dob: { type: Date, required: false},
   christmasPreference: { type: String, required: false},
   // friends: { type: [friendSchema], default: [] },
   posts: { type: [postSchema], default: [] },
@@ -31,7 +31,7 @@ function validateUser(user) {
     lastName: Joi.string().min(2).max(50).required(),
     email: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(5).max(1024).required(),
-    dob: Joi.string().min(2).max(50).required(),
+    dob: Joi.date().required(),
     christmasPreference: Joi.string().required().allow("snowman","tree"),
   });
     return schema.validate(user);
