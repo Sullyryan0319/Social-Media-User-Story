@@ -1,6 +1,7 @@
 const { User, validateUser, validateLogin } = require("../models/userSchema");
 const { Post, validatePost } = require("../models/postSchema");
 const bcrypt = require("bcrypt");
+const auth = require("../middleware/auth");
 const express = require("express");
 const router = express.Router();
 const config = require('config');
@@ -31,7 +32,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/register", async (req, res) => {
+router.post("/register", auth, async (req, res) => {
   try {
     const { error } = validateUser(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -67,7 +68,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   try {
     const { error } = validateUser(req.body);
     if (error) return res.status(400).send(error);
@@ -102,7 +103,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
 
@@ -118,7 +119,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 
-router.post("/:id/posts", async (req, res) => {
+router.post("/:id/posts", auth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user)
@@ -139,7 +140,7 @@ router.post("/:id/posts", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", auth, async (req, res) => {
   try {
     const { error } = validateLogin(req.body);
     if (error) return res.status(400).send(error.details[0].message);
