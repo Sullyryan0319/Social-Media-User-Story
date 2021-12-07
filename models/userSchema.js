@@ -48,7 +48,7 @@ function validateUser(user) {
     password: Joi.string().min(5).max(1024).required(),
     dob: Joi.date().required(),
     christmasPreference: Joi.string().required().allow("snowman", "tree"),
-    image: joi.string(),
+    image: Joi.string(),
   });
   return schema.validate(user);
 }
