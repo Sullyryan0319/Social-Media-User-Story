@@ -5,9 +5,9 @@ const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 const express = require("express");
 const router = express.Router();
-const config = require('config');
-const jwt = require('jsonwebtoken');
-const fileUpload = require('../middleware/fileUpload');
+const config = require("config");
+const jwt = require("jsonwebtoken");
+const fileUpload = require("../middleware/fileUpload");
 
 router.get("/", async (req, res) => {
   try {
@@ -17,8 +17,6 @@ router.get("/", async (req, res) => {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }
 });
-
-
 
 router.get("/:id", async (req, res) => {
   try {
@@ -49,23 +47,33 @@ router.post("/register", auth, async (req, res) => {
       email: req.body.email,
       dob: req.body.dob,
       christmasPreference: req.body.christmasPreference,
-      password: await bcrypt.hash(req.body.password, salt)
+      password: await bcrypt.hash(req.body.password, salt),
+      image: file.path,
     });
 
     await user.save();
-    const token = jwt.sign({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      dob: user.dob,
-      christmasPreference: user.christmasPreference,
-      isAdmin: user.isAdmin }, 
-      config.get('jwtsecret'));
+    const token = jwt.sign(
+      {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        dob: user.dob,
+        christmasPreference: user.christmasPreference,
+        isAdmin: user.isAdmin,
+      },
+      config.get("jwtsecret")
+    );
     return res
-    .header('x-auth-token', token)
-    .header('access-control-expose-headers', 'x-auth-token')
-    .send({firstName: user.firstName, lastName: user.lastName, email: user.email, dob: user.dob, christmasPreference: user.christmanPreference });
-
+      .header("x-auth-token", token)
+      .header("access-control-expose-headers", "x-auth-token")
+      .send({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        dob: user.dob,
+        christmasPreference: user.christmanPreference,
+        image: user.image,
+      });
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }
@@ -93,13 +101,16 @@ router.put("/:id", auth, async (req, res) => {
         .send(`The user with id "${req.params.id}" does not exist.`);
 
     await user.save();
-    const token = jwt.sign({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      dob: user.dob,
-      christmasPreference: user.christmasPreference,
-    }, config.get('jwtsecret'));
+    const token = jwt.sign(
+      {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        dob: user.dob,
+        christmasPreference: user.christmasPreference,
+      },
+      config.get("jwtsecret")
+    );
     return res.send(token);
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
@@ -120,7 +131,6 @@ router.delete("/:id", [auth, admin], async (req, res) => {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }
 });
-
 
 router.post("/:id/posts", auth, async (req, res) => {
   try {
@@ -158,13 +168,16 @@ router.post("/login", auth, async (req, res) => {
     if (!validPassword)
       return res.status(400).send("Invalid email or password.");
 
-      const token = jwt.sign({
+    const token = jwt.sign(
+      {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         dob: user.dob,
         christmasPreference: user.christmasPreference,
-      }, config.get('jwtsecret'));
+      },
+      config.get("jwtsecret")
+    );
     return res.send(token);
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
