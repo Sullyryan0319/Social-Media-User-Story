@@ -2,6 +2,7 @@ const { User, validateUser, validateLogin } = require("../models/userSchema");
 const { Post, validatePost } = require("../models/postSchema");
 const bcrypt = require("bcrypt");
 const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 const express = require("express");
 const router = express.Router();
 const config = require('config');
@@ -47,7 +48,7 @@ router.post("/register", auth, async (req, res) => {
       email: req.body.email,
       dob: req.body.dob,
       christmasPreference: req.body.christmasPreference,
-      password: await bcrypt.hash(req.body.password, salt),
+      password: await bcrypt.hash(req.body.password, salt)
     });
 
     await user.save();
@@ -57,7 +58,8 @@ router.post("/register", auth, async (req, res) => {
       email: user.email,
       dob: user.dob,
       christmasPreference: user.christmasPreference,
-    }, config.get('jwtsecret'));
+      isAdmin: user.isAdmin }, 
+      config.get('jwtsecret'));
     return res
     .header('x-auth-token', token)
     .header('access-control-expose-headers', 'x-auth-token')
@@ -103,7 +105,7 @@ router.put("/:id", auth, async (req, res) => {
   }
 });
 
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", [auth, admin], async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
 
