@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   aboutMe: { type: String, maxlength: 1024, minlength: 5 },
   friendRequests: [],
   isAdmin: { type: Boolean, default: false },
-  // image: {type: String, default:""}
+  image: {type: String, default:""}
 });
 
 userSchema.methods.generateAuthToken = function () {
@@ -32,7 +32,8 @@ userSchema.methods.generateAuthToken = function () {
     dob: this.dob,
     christmasPreference: this.christmanPreference,
     password: this.password,
-    isAdmin: this.isAdmin
+    isAdmin: this.isAdmin,
+    image: this.image
   },
   config.get("jwtsecret"));
 };
@@ -47,6 +48,7 @@ function validateUser(user) {
     password: Joi.string().min(5).max(1024).required(),
     dob: Joi.date().required(),
     christmasPreference: Joi.string().required().allow("snowman", "tree"),
+    image: joi.string(),
   });
   return schema.validate(user);
 }

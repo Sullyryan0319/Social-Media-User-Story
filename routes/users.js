@@ -7,6 +7,7 @@ const express = require("express");
 const router = express.Router();
 const config = require('config');
 const jwt = require('jsonwebtoken');
+const fileUpload = require('../middleware/fileUpload');
 
 router.get("/", async (req, res) => {
   try {
