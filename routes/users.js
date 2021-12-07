@@ -57,7 +57,11 @@ router.post("/register", async (req, res) => {
       dob: user.dob,
       christmasPreference: user.christmasPreference,
     }, config.get('jwtsecret'));
-    return res.send(token);
+    return res
+    .header('x-auth-token', token)
+    .header('access-control-expose-headers', 'x-auth-token')
+    .send({firstName: user.firstName, lastName: user.lastName, email: user.email, dob: user.dob, christmasPreference: user.christmanPreference });
+
   } catch (ex) {
     return res.status(500).send(`Internal Server Error: ${ex}`);
   }

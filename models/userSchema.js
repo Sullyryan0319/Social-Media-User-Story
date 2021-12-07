@@ -19,7 +19,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true, maxlength: 200, minlength: 5 },
   isAdmin: { type: Boolean, default: false },
   aboutMe: {type: String, maxlength: 1024, minlength: 5 },
-  friendRequests: [{}]
+  friendRequests: [{}],
+  // image: {type: String, default:""}
 
 });
 
