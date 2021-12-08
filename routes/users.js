@@ -48,7 +48,7 @@ router.post("/register", fileUpload.single("image"), async (req, res) => {
       dob: req.body.dob,
       christmasPreference: req.body.christmasPreference,
       password: await bcrypt.hash(req.body.password, salt),
-      image: file.path,
+      image: req.file.path,
     });
 
     await user.save();
@@ -153,7 +153,7 @@ router.post("/:id/posts", auth, async (req, res) => {
   }
 });
 
-router.post("/login", auth, async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { error } = validateLogin(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -175,6 +175,8 @@ router.post("/login", auth, async (req, res) => {
         email: user.email,
         dob: user.dob,
         christmasPreference: user.christmasPreference,
+        image: user.image,
+        id: user._id
       },
       config.get("jwtsecret")
     );

@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/users', users, posts);
 
-app.use("/uploads/images", express.static(path.join("uploads, images")));
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 app.use((error, req, res, next) => {
     if(req.file){
         fs.unlink(req.file.path, (err) => {
