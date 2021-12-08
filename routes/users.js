@@ -32,7 +32,9 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/register", fileUpload.single("image"), async (req, res) => {
+router.post("/", 
+fileUpload.single("image"), 
+async (req, res) => {
   try {
     const { error } = validateUser(req.body);
     if (error) return res.status(400).send(error.details[0].message);
@@ -48,9 +50,9 @@ router.post("/register", fileUpload.single("image"), async (req, res) => {
       dob: req.body.dob,
       christmasPreference: req.body.christmasPreference,
       password: await bcrypt.hash(req.body.password, salt),
-      image: file.path,
+      image: req.file.path,
     });
-
+    
     await user.save();
     const token = jwt.sign(
       {
@@ -60,6 +62,7 @@ router.post("/register", fileUpload.single("image"), async (req, res) => {
         dob: user.dob,
         christmasPreference: user.christmasPreference,
         isAdmin: user.isAdmin,
+        image: user.image,
       },
       config.get("jwtsecret")
     );
