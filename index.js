@@ -15,6 +15,9 @@ app.use('/api/users', users, posts);
 
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
 app.use((error, req, res, next) => {
+    if(!req.file){
+        console.log("no file")
+    }
     if(req.file){
         fs.unlink(req.file.path, (err) => {
             console.log(err);
