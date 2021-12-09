@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const postSchema = new mongoose.Schema({
-  // picture: { },
+  userId: {type: String},
+  picture: {type: String},
   description: { type: String, required: true, minlength: 5, maxlength: 50 },
   likes: { type: Number, default: 0 },
 });
