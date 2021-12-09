@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 const { Post, postSchema } = require("./postSchema");
 
+const friendsSchema = new mongoose.Schema({
+  firstName: { type: String, required: true, minlength: 2, maxlength: 50 },
+  lastName: { type: String, required: true, minlength: 2, maxlength: 50 }
+});
+
 const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true, minlength: 2, maxlength: 50 },
   lastName: { type: String, required: true, minlength: 2, maxlength: 50 },
@@ -14,7 +19,7 @@ const userSchema = new mongoose.Schema({
   },
   dob: { type: Date, required: false },
   christmasPreference: { type: String, required: false },
-  // friends: { type: [friendSchema], default: [] },
+  friends: { type: [friendsSchema], default: [] },
   posts: { type: [postSchema], default: [] },
   password: { type: String, required: true, maxlength: 200, minlength: 5 },
   isAdmin: { type: Boolean, default: false },
@@ -23,6 +28,7 @@ const userSchema = new mongoose.Schema({
   isAdmin: { type: Boolean, default: false },
   image: {type: String, default:""}
 });
+
 
 userSchema.methods.generateAuthToken = function () {
   return jwt.sign({
