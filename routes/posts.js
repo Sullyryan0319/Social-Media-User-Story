@@ -45,6 +45,7 @@ router.post("/:id/posts", async (req, res) => {
     const post = new Post({
       description: req.body.description,
       likes: req.body.likes,
+      image: req.body.image
     });
     if (!post) return res.status(400).send(`Reply doesnt exist.`);
     user.posts.push(post);
