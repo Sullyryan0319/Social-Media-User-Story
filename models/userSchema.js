@@ -39,7 +39,7 @@ userSchema.methods.generateAuthToken = function () {
     christmasPreference: this.christmanPreference,
     password: this.password,
     isAdmin: this.isAdmin,
-    image: this.image
+    image: this.image,
   },
   config.get("jwtsecret"));
 };
